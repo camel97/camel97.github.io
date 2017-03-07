@@ -60,7 +60,7 @@ namespace WindowsFormsApplication1
         {
             try
             {                
-                string strmsg = "" + "(" + ips[1].ToString() + ")" + DateTime.Now.ToLongTimeString() + "\n" + " " + this.rtbSend.Text + "\n";
+                string strmsg = "" + myName.Text + "(" + ips[1].ToString() + ")" + DateTime.Now.ToLongTimeString() + "\n" + " " + this.rtbSend.Text + "\n";
 
                 TcpClient client = new TcpClient(txtIP.Text, Port);      //创建tcpclient对象
                 NetworkStream ntwstream = client.GetStream();                   //创建网络流
@@ -71,8 +71,6 @@ namespace WindowsFormsApplication1
                 wstream.Close();
                 client.Close();                                                 //关闭服务，释放对象
 
-                rtbContent.AppendText(strmsg);
-                rtbContent.ScrollToCaret();
                 rtbSend.Clear();                                                //用户界面显示处理
 
             }
@@ -93,8 +91,6 @@ namespace WindowsFormsApplication1
                     NetworkStream ntwstream = client.GetStream();                   //创建网络流
                     StreamWriter wstream = new StreamWriter(ntwstream, Encoding.Default);
 
-
-                    //string hostIP = ips[5].ToString();
                     string hostIP;
                     foreach(IPAddress hostIPAddress in ips)
                     {
