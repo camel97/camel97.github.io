@@ -30,6 +30,7 @@ namespace WindowsFormsApplication2
         private static string message = "";                 //定义发送和接收的消息
         string[] ips = new string[MAXCONNECT];              //定义存储各个成员ip地址的数组
         private static string eachIP = "";                  //定义接收每个成员的ip
+        IPAddress[] hostname = Dns.GetHostAddresses(Dns.GetHostName());
 
 
 
@@ -45,7 +46,7 @@ namespace WindowsFormsApplication2
         private void StartListen()                              //线程监听方法
         {
             message = "";
-            tcpListener = new TcpListener(Port);
+            tcpListener = new TcpListener(hostname[5],Port);
             tcpListener.Start();
             while (true)
             {
@@ -67,7 +68,7 @@ namespace WindowsFormsApplication2
         private void getIP()
         {
             eachIP = "";
-            tcpListenerIp = new TcpListener(ipPort);
+            tcpListenerIp = new TcpListener(hostname[5],ipPort);
             tcpListenerIp.Start();
             while (true)
             {
@@ -104,7 +105,8 @@ namespace WindowsFormsApplication2
                         break;
                     }
                 }
-                connectIP.AppendText(eachIP);
+                connectIP.AppendText(eachIP+"\n");
+                connectIP.AppendText("\n");
                 eachIP = "";
             }
             if (message != "")
@@ -126,7 +128,7 @@ namespace WindowsFormsApplication2
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    
                 }
                 chatContent.AppendText(message);
                 chatContent.ScrollToCaret();
