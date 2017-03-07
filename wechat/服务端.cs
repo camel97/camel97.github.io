@@ -42,6 +42,7 @@ namespace WindowsFormsApplication2
             connect = new Thread(new ThreadStart(this.getIP)); //创建连接线程指定方法
             connect.Start();                                         //线程启动
             timer1.Start();                                     //计时器启动
+            timer2.Start();
         }
         private void StartListen()                              //线程监听方法
         {
@@ -135,9 +136,30 @@ namespace WindowsFormsApplication2
                 message = "";
             }
         }
+        /*计时器用来保存聊天记录*/
+        private void timer2_Tick(object sender,EventArgs e)
+        {
+            //string chatRecords = chatContent.Text;
+            try
+                {
+                    if (!File.Exists("Log.txt"))
+                    {
+                        //MessageBox.Show("create");
+                        File.Create("Log.txt");
+                    }
+                    using (StreamWriter swriter = new StreamWriter("Log.txt", true)) { swriter.WriteLine(chatContent.Text); }
+                    chatContent.Clear();
 
-        
-        
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                
+        }
+
+
+
         /*关闭窗体，停止所有服务*/
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
