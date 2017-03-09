@@ -30,14 +30,14 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender,EventArgs e)
         {
-            td = new Thread(new ThreadStart(this.StartListen));
-            td.Start();
+            td = new Thread(new ThreadStart(this.StartListen));//启动侦听线程
+            td.Start();                                             //启动计时器
             timer1.Start();
         }
         private void StartListen()
         {
             message = "";
-            tcpListener = new TcpListener(Port);
+            tcpListener = new TcpListener(Port);                //创建侦听对象
             tcpListener.Start();
             while (true)
             {
@@ -47,9 +47,9 @@ namespace WindowsFormsApplication1
                     byte[] mbyte = new byte[1024];
                     NetworkStream ntwstream = client.GetStream();
                     int i = ntwstream.Read(mbyte, 0, mbyte.Length);
-                    message = Encoding.Default.GetString(mbyte, 0, i);
+                    message = Encoding.Default.GetString(mbyte, 0, i);//将数据流中的信息保存在字符串 message 中
                 }
-                catch
+                catch                                   //这里没有做异常处理。因为在测试的时候给了异常处理有时候会崩溃。。
                 {
 
                 }
@@ -59,7 +59,8 @@ namespace WindowsFormsApplication1
         private void button1_Click(object sender,EventArgs e)
         {
             try
-            {                
+            {     
+                //设置消息格式           
                 string strmsg = "" + myName.Text + "(" + ips[1].ToString() + ")" + DateTime.Now.ToLongTimeString() + "\n" + " " + this.rtbSend.Text + "\n";
 
                 TcpClient client = new TcpClient(txtIP.Text, Port);      //创建tcpclient对象
@@ -85,26 +86,23 @@ namespace WindowsFormsApplication1
         {
             try
             {
-                TcpClient client = new TcpClient(txtIP.Text, serPort);
+                TcpClient client = new TcpClient(txtIP.Text, serPort);//请求连接
                 if (client != null)
                 {
                     NetworkStream ntwstream = client.GetStream();                   //创建网络流
                     StreamWriter wstream = new StreamWriter(ntwstream, Encoding.Default);
 
                     string hostIP;
-                    foreach(IPAddress hostIPAddress in ips)
+                    foreach(IPAddress hostIPAddress in ips)         //没找到 查找自己准确 ip 的方法，IPaddress 会返回一堆地址
                     {
                         hostIP = hostIPAddress.ToString();
-                        if (Regex.IsMatch(hostIP, @"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"))
+                        if (Regex.IsMatch(hostIP, @"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"))//这里用了正则主要是筛选成正确的 ip
                         {
-                            if (Regex.IsMatch(hostIP, "192")) {  }
-
-                            else { wstream.Write(hostIP); }          //将消息写入网络流
-                        }
+                            if (Regex.IsMatch(hostIP, "222")) { wstream.Write(hostIP); }
+                        }                                  //找 222 开头的字符串作为ip这里有很大的局限性。因为室友的 ip 都是 222.XXXX 
                     }
                     wstream.Flush();
                     wstream.Close();
-
                     MessageBox.Show("连接成功");
                     client.Close();
                 }
@@ -121,18 +119,18 @@ namespace WindowsFormsApplication1
         {
             if (message != "")
             {
-                rtbContent.AppendText(message);
-                rtbContent.ScrollToCaret();
+                rtbContent.AppendText(message);         //侦听到消息后显示内容
+                rtbContent.ScrollToCaret();             //自动滚屏
                 message = "";
             }
         }
-
+        /*关闭窗口。停止所有服务*/
         private void Form1_FormClosed(object sender,FormClosedEventArgs e)
         {
-            if (this.tcpListener != null) { tcpListener.Stop(); }
+            if (this.tcpListener != null) { tcpListener.Stop(); }           //停止侦听
             if (td != null)
             {
-                if (td.ThreadState == ThreadState.Running) { td.Abort(); }
+                if (td.ThreadState == ThreadState.Running) { td.Abort(); }      //终止线程
             }
         }
 
