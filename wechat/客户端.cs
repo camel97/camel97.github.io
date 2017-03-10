@@ -26,7 +26,7 @@ namespace WindowsFormsApplication1
         private Thread td;                                  //声明监听线程
         private TcpListener tcpListener;                    //声明监听对象
         private static string message = "";                 //定义发送和接收的消息
-        IPAddress[] ips = Dns.GetHostAddresses(Dns.GetHostName());      //获取本地主机ip
+        IPAddress[] ips = Dns.GetHostEntry(Dns.GetHostName()).AddressList;      //获取本地主机ip
 
         private void Form1_Load(object sender,EventArgs e)
         {
@@ -92,15 +92,18 @@ namespace WindowsFormsApplication1
                     NetworkStream ntwstream = client.GetStream();                   //创建网络流
                     StreamWriter wstream = new StreamWriter(ntwstream, Encoding.Default);
 
-                    string hostIP;
-                    foreach(IPAddress hostIPAddress in ips)         //没找到 查找自己准确 ip 的方法，IPaddress 会返回一堆地址
+                    
+                    foreach(IPAddress hostIPAddress in ips)         
                     {
-                        hostIP = hostIPAddress.ToString();
-                        if (Regex.IsMatch(hostIP, @"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"))//这里用了正则主要是筛选成正确的 ip
+                        string hostIP = string.Empty;
+                        if (hostIPAddress.AddressFamily.ToString() == "InterNetwork")
                         {
-                            if (Regex.IsMatch(hostIP, "222")) { wstream.Write(hostIP); }
-                        }                                  //找 222 开头的字符串作为ip这里有很大的局限性。因为室友的 ip 都是 222.XXXX 
+                            hostIP = hostIPAddress.ToString();
+                            
+                        }
+                        wstream.Write(hostIP);
                     }
+
                     wstream.Flush();
                     wstream.Close();
                     MessageBox.Show("连接成功");
@@ -124,6 +127,7 @@ namespace WindowsFormsApplication1
                 message = "";
             }
         }
+		
         /*关闭窗口。停止所有服务*/
         private void Form1_FormClosed(object sender,FormClosedEventArgs e)
         {

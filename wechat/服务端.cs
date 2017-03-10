@@ -30,7 +30,6 @@ namespace WindowsFormsApplication2
         private static string message = "";                 //定义发送和接收的消息
         string[] ips = new string[MAXCONNECT];              //定义存储各个成员ip地址的数组
         private static string eachIP = "";                  //定义接收每个成员的ip
-        IPAddress[] hostname = Dns.GetHostAddresses(Dns.GetHostName());
 
 
 
@@ -186,5 +185,6 @@ namespace WindowsFormsApplication2
                 if (connect.ThreadState == ThreadState.Running) { connect.Abort(); }
             }                                                                           //关闭线程
         }
+		
     }
 }
